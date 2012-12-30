@@ -22,8 +22,6 @@ void initializeRobot()  {
 	nMotorEncoder[ScissorL1] = 0;
 	nMotorEncoder[ScissorR1] = 0;
 	nMotorEncoder[HandL] = 0;
-	//servo[HandLR] = 127;
-	//servo[HandOp] = 0;
 }
 
 void syncMotors (char Motor1, char Motor2) {
@@ -33,15 +31,15 @@ void syncMotors (char Motor1, char Motor2) {
 		motor[Motor1] += 1;
 }
 
-void SetMotor(char name, int x) {             //makes a void with argument like in SetServo
-	motor[name] = x;                            //The motor will be set to x (specified when the function is called
+void SetMotor(char name, int x) {             // makes a void with argument like in SetServo
+	motor[name] = x;                            // The motor will be set to x (specified when the function is called
 }
 
 
-int J1X1 = joystick.joy1_x1;       //These lines make pretty variables for the joysticks
-int J1X2 = joystick.joy1_x2;       //J is which logitech controller is being used
-int J1Y1 = joystick.joy1_y1;       //X or Y blah is which direction the joystick will go
-int J1Y2 = joystick.joy1_y2;
+int J1X1 = joystick.joy1_x1;       // These lines make pretty variables for the joysticks
+int J1X2 = joystick.joy1_x2;       // J is which logitech controller is being used
+int J1Y1 = joystick.joy1_y1;       // X or Y is the axis on which the compiler will read values
+int J1Y2 = joystick.joy1_y2;       // 1 or 2 is which joystick values will be read from
 int J2X1 = joystick.joy2_x1;
 int J2X2 = joystick.joy2_x2;
 int J2Y1 = joystick.joy2_y1;
@@ -51,12 +49,17 @@ int J2Y2 = joystick.joy2_y2;
 
 void drive() {
 	int crawlRate = 25;  // adjust this for a different crawl rate
+	int leftMotorVal = J1Y2 + J1X2;
+	int rightMotorVal = J1Y2 - J1X2;
+	int expLeftMotorVal = pow(10, ((((leftMotorVal * 2) / 255) - 1) * ((leftMotorVal / (leftMotorVal * -1)) * -1)));
+	int expRightMotorVal = pow(10, ((((rightMotorVal * 2) / 255) - 1) * ((rightMotorVal / (rightMotorVal * -1)) * -1)));
+
 	if (joy1Btn(6)){
-		SetMotor(ML, (J1Y2 / crawlRate + J1X2 / crawlRate));  // crawl rate means that it'll go slowly if the driver
-		SetMotor(MR, (J1Y2 / crawlRate - J1X2 / crawlRate));  // pushes a button
+		SetMotor(ML, expLeftMotorVal / crawlRate);  // crawl rate means that it'll go slowly if the driver
+		SetMotor(MR, expRightMotorVal / crawlRate);  // pushes a button
 	} else {
-		SetMotor(ML, (J1Y2 + J1X2));
-		SetMotor(MR, (J1Y2 - J1X2));
+		SetMotor(ML, expLeftMotorVal);
+		SetMotor(MR, expRightMotorVal);
 	}
 }
 
