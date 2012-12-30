@@ -15,6 +15,11 @@ void initializeRobot(char DrivL, char DrivR, char HndL, char HndR, char scsrL, c
 	nMotorEncoder[scsrR] = 0;
 }
 
+void rememberHandPosition (char hand) {
+	long hand_position = nMotorEncoder[hand];
+	AddToDatalog(0, hand_position);
+}
+
 //int irDirection (char sensor) {
 //	int _dirAC = 0;
 //	int acS1, acS2, acS3, acS4, acS5 = 0;
@@ -142,17 +147,17 @@ peg_t dondePeg(char sensor1, char sensor2) {
 
 	peg_t peg;
 
-	int sensor1state = IRSensorRegion(sensor1, false);
-	int sensor2state = IRSensorRegion(sensor2, true);
+	//int sensor1state = IRSensorRegion(sensor1, false);
+	//int sensor2state = IRSensorRegion(sensor2, true);
 
 
-	//int make_it_convinient_for_peg_t = IRSensorRegion(sensor false) - 5;
-	if (make_it_convinient_for_peg_t > 2 || make_it_convinient_for_peg_t < 0) {
-		peg = middle;
-	}
-	else {
-		peg = make_it_convinient_for_peg_t;
-	}
+	////int make_it_convinient_for_peg_t = IRSensorRegion(sensor false) - 5;
+	//if (make_it_convinient_for_peg_t > 2 || make_it_convinient_for_peg_t < 0) {
+	//	peg = middle;
+	//}
+	//else {
+	//	peg = make_it_convinient_for_peg_t;
+	//}
 	return peg;
 }
 
