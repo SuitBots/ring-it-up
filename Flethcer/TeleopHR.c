@@ -19,8 +19,9 @@
 #include "JoystickDriver.c"
 
 void initializeRobot()  {
-	nMotorEncoder[ScissorL1] = 0;  //This may be the solution to our problems
+	nMotorEncoder[ScissorL1] = 0;
 	nMotorEncoder[ScissorR1] = 0;
+	nMotorEncoder[HandL] = 0;
 	//servo[HandLR] = 127;
 	//servo[HandOp] = 0;
 }
@@ -61,20 +62,26 @@ void drive() {
 
 
 void operateLR() {
+	int left = 0;
+	int right = 256;
+	int stopped = 127;
 
 	if (joy2Btn(5)) {
-		servo[HandLR] = 0;
+		servo[HandLR] = left;
 	}
 	else if (joy2Btn(6)) {
-		servo[HandLR] = 256;
+		servo[HandLR] = right;
 	}
 	else {
-		servo[HandLR] = 127;
+		servo[HandLR] = stopped;
 	}
 }
 
 void limit_hand_motion() {
 	int distance_limit = 180; //placeholder
+
+	if (joy2Btn(0))
+		nMotorEncoder[HandL] = 0;
 	if (! joy2Btn(8)) {
 		if (nMotorEncoder[HandL] > distance_limit
 			  || nMotorEncoder[HandL] < distance_limit * -1)
@@ -120,7 +127,7 @@ void operate_fork_assembly() {
 		servo[fork_drop] = 100; //tune it
 
 	if (joy2Btn(6)) // left trigger
-		motor[fork_prop] = 100;
+		motor[fork_prop] = 100; //tune it
 }
 
 
@@ -139,7 +146,9 @@ task accessories()
 
 	operateLR();
 
-	SetMotor(HandL, -J2Y2 / 2.75);
+	int hand_ritard = 2.75;
+
+	SetMotor(HandL, -J2Y2 / hand_ritard);
 	limit_hand_motion();
 
 	operate_scissor();
