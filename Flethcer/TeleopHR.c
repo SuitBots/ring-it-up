@@ -142,7 +142,9 @@ task accessories()
 	SetMotor(HandL, -J2Y2 / 2.75);
 	limit_hand_motion();
 
-
+	operate_scissor();
+	operate_hand_vertical();
+	operate_fork_assembly();
 }
 
 
