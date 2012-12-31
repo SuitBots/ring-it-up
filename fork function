@@ -1,6 +1,6 @@
 //all the functions etc
 
-void fork_go_up () {
+void fork_go_up_finite_amount () {
 
  }
 
@@ -9,14 +9,17 @@ void fork_go_down () {
 }
 
 void operate_fork () {
-  int counter = 0;
 
   if (joy2Btn(8)
       && counter == 0) {
-    fork_go_up ();
+    fork_go_up_finite amount ();
     ++counter;
-  }
-  if (joy2Btn(8)) {
     fork_go_down ();
   }
+}
+
+task accesories () {
+  int counter = 0;
+
+  operate_fork ();
 }
