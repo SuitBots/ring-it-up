@@ -68,8 +68,8 @@ void drive() {
 		SetMotor(ML, expLeftMotorVal);
 		SetMotor(MR, expRightMotorVal);
 	}*/
-	SetMotor(ML, (J1Y2() + J1X2()));
-	SetMotor(MR, (J1Y2() - J1X2()));
+	SetMotor(ML, (J1Y2() - J1X2()));
+	SetMotor(MR, (J1Y2() + J1X2()));
 }
 
 
@@ -113,13 +113,13 @@ void operate_scissor() {
 	SetMotor(ScissorR2, -J2Y1());
 
 	if (joy2Btn(3))	{ // B button
-		SetMotor(ScissorL1, 75);
-		SetMotor(ScissorL2, 75);
+		SetMotor(ScissorL1, 90);
+		SetMotor(ScissorL2, 90);
 	}
 
 	if (joy2Btn(4)) { // Y button
-		SetMotor(ScissorR1, 75);
-		SetMotor(ScissorR2, 75);
+		SetMotor(ScissorR1, 90);
+		SetMotor(ScissorR2, 90);
 	}
 }
 
