@@ -140,24 +140,29 @@ int IRSensorRegion (char sensorName, bool reversed) {  // include these commente
 peg_t dondePeg(char sensor1, char sensor2) {
 	// This assumes the edge of the robot is 21" from the edge of field, like this
 	//
-  // |                   +-----+
-	// | |---   21"   ---| |Robot|
-	// +-------------------+-----+
+  // |                   +-----+         +---------+
+	// | |---   21"   ---| |Robot|         |Dispenser|
+	// +-------------------+-----+---~ ~---+---------+--
 	//
 
 	peg_t peg;
 
-	//int sensor1state = IRSensorRegion(sensor1, false);
-	//int sensor2state = IRSensorRegion(sensor2, true);
+	int sensor1state = IRSensorRegion(sensor1, false);
+	int sensor2state = IRSensorRegion(sensor2, false);
+	if (sensor1state == 5
+		  && sensor2state == 5) {
+		peg = right;
+	}
+	if (sensor1state == 6
+		  && sensor2state == 6) {
+		peg = middle;
+	}
+	if (sensor1state == 7
+		  && sensor2state == 7) {
+		peg = left;
+	}
+	else peg = middle;
 
-
-	////int make_it_convinient_for_peg_t = IRSensorRegion(sensor false) - 5;
-	//if (make_it_convinient_for_peg_t > 2 || make_it_convinient_for_peg_t < 0) {
-	//	peg = middle;
-	//}
-	//else {
-	//	peg = make_it_convinient_for_peg_t;
-	//}
 	return peg;
 }
 

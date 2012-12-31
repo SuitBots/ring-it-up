@@ -1,7 +1,7 @@
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTServo,  HTMotor)
 #pragma config(Hubs,  S2, HTMotor,  none,     none,     none)
-#pragma config(Sensor, S1,     ,               sensorI2CMuxController)
-#pragma config(Sensor, S2,     ,               sensorI2CMuxController)
+#pragma config(Sensor, S3,     ir,             sensorHiTechnicIRSeeker1200)
+#pragma config(Sensor, S4,     ir1,            sensorHiTechnicIRSeeker1200)
 #pragma config(Motor,  motorA,          HandL,         tmotorNXT, openLoop, reversed, encoder)
 #pragma config(Motor,  motorB,          HandR,         tmotorNXT, openLoop, encoder)
 #pragma config(Motor,  motorC,          Scoop,         tmotorNXT, openLoop, encoder)
@@ -19,52 +19,86 @@
 #include "Autonomous_Base.h"
 
 /// @returns 0 for the left column, 1 for middle, 2 for right
-int FindTheColumnThatTheIRBeaconIsOn() {
-	// TODO
-	return 0;
+peg_t FindTheColumnThatTheIRBeaconIsOn() {
+	peg_t peg = dondePeg(ir, ir1);
+	return peg;
 }
 
 void DeadReckoningDriveForward(long amount) {
-	// TODO
+	forward(100, amount, true, ML, MR);
 }
 
 /// @returns the amount we should drive forward in phase 1 for each column
-long Forward1Amount(int column) {
-	// TODO
-	return 100;
+long InitialForward(peg_t column) {
+	if (column == left) {
+		return 300; // tune it
+	}
+	if (column == middle) {
+		return 200; // tune it
+	}
+	if (column == right) {
+		return 100; // tune it
+	}
+	else return 200; // tune it
 }
 
 /// @returns the amount we should back up from our column to get to the dispensor
-long BackUpAmount (int column) {
-	// TODO
-	return -100;
+long BackUpAmount (peg_t column) {
+	if (column == left) {
+		return -300; // tune it
+	}
+	if (column == middle) {
+		return -200; // tune it
+	}
+	if (column == right) {
+		return -100; // tune it
+	}
+	else return -200; // tune it
 }
 
 /// @returns the amount we should drive forward in phase 2 for each column
-long Forward2Amount(int column) {
-	// TODO
-	return 100;
+long Forward2Amount(peg_t column) {
+	if (column == left) {
+		return 300; // tune it
+	}
+	if (column == middle) {
+		return 200; // tune it
+	}
+	if (column == right) {
+		return 100; // tune it
+	}
+	else return 200; // tune it
 }
 
 
 /// @returns the amount we should drive forward to address the column
-long Forward3Amount(int column) {
-	// TODO
-	return 100;
+long Forward3Amount(peg_t column) {
+	if (column == left) {
+		return 300; // tune it
+	}
+	if (column == middle) {
+		return 200; // tune it
+	}
+	if (column == right) {
+		return 100; // tune it
+	}
+	else return 200; // tune it
 }
 
-void TurnLeftThisManyDegrees (float degrees) {
-	// TODO
+void TurnLeftThisManyDegrees (int degrees) {
+	pivotTurn(100, degrees, true, ML, MR);
 }
 
 // Raises the scissor lift to the correct level for peg 1
 // Also tilts the hand forward
 void RaiseTheScissorToPeg1Level () {
-	// TODO
+	forward(100, 300000, false, ScissorL1, ScissorR1); //tune the 300000 in both of these
+	forward(100, 300000, false, ScissorL2, ScissorR2);
 }
 
 void DropScissorLift () {
-	// TODO
+	forward(100, 300000, true, ScissorL1, ScissorR1); //tune the 300000 in both of these
+	forward(100, 300000, true, ScissorL2, ScissorR2);
 }
 
 /// @returns the power reading from the left IR sensor
@@ -124,7 +158,7 @@ void GuidedDriveForward () {
 
 void IRAutonomous () {
 	int column = FindTheColumnThatTheIRBeaconIsOn();
-	DeadReckoningDriveForward(Forward1Amount(column));
+	DeadReckoningDriveForward(InitialForward(column));
 	TurnLeftThisManyDegrees(45.0);
 	DeadReckoningDriveForward(Forward2Amount(column));
 	RaiseTheScissorToPeg1Level ();
