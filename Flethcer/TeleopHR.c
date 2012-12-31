@@ -51,10 +51,17 @@ void drive() {
 	int crawlRate = 25;  // adjust this for a different crawl rate
 	int leftMotorVal = J1Y2 + J1X2;
 	int rightMotorVal = J1Y2 - J1X2;
-	int expLeftMotorVal = pow(10, (((((leftMotorVal * 2) / 255) * ((leftMotorVal / (leftMotorVal * -1)) * -1))) - 1));
-	int expRightMotorVal = pow(10, (((((rightMotorVal * 2) / 255) * ((rightMotorVal / (rightMotorVal * -1)) * -1))) - 1));
+	int expLeftMotorVal;
+	int expRightMotorVal;
+	if (leftMotorVal < 0){
+		expLeftMotorVal = pow(10, ((((abs(leftMotorVal) * 2) / 255)))) -1;
+		expLeftMotorVal *= -1;
+	}
+	else expLeftMotorVal = pow(10, ((((leftMotorVal * 2) / 255)))) - 1;
+	if (rightMotorVal < 0)
+	expRightMotorVal = pow(10, ((((abs(leftMotorVal) * 2) / 255)))) - 1;
 
-	if (joy1Btn(6)){
+	if (joy1Btn(6)){ // Right Button
 		SetMotor(ML, expLeftMotorVal / crawlRate);  // crawl rate means that it'll go slowly if the driver
 		SetMotor(MR, expRightMotorVal / crawlRate);  // pushes a button
 	} else {
@@ -69,10 +76,10 @@ void operateLR() {
 	int right = 256;
 	int stopped = 127;
 
-	if (joy2Btn(5)) {
+	if (joy2Btn(5)) { // Left Button
 		servo[HandLR] = left;
 	}
-	else if (joy2Btn(6)) {
+	else if (joy2Btn(6)) { // Right Button
 		servo[HandLR] = right;
 	}
 	else {
@@ -83,9 +90,9 @@ void operateLR() {
 void limit_hand_motion() {
 	int distance_limit = 180; //placeholder
 
-	if (joy2Btn(0))
+	if (joy2Btn(8)) // Select Button
 		nMotorEncoder[HandL] = 0;
-	if (! joy2Btn(8)) {
+	if (! joy2Btn(0)) { // X Button
 		if (nMotorEncoder[HandL] > distance_limit
 			  || nMotorEncoder[HandL] < distance_limit * -1)
 			motor[HandL] = 0;

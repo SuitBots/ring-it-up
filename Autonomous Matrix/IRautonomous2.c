@@ -21,6 +21,9 @@
 /// @returns 0 for the left column, 1 for middle, 2 for right
 peg_t FindTheColumnThatTheIRBeaconIsOn() {
 	peg_t peg = dondePeg(ir, ir1);
+	if (peg == left) writeDebugStreamLine("LEFT");
+	if (peg == middle) writeDebugStreamLine("MIDDLE");
+	if (peg == right) writeDebugStreamLine("RIGHT");
 	return peg;
 }
 
@@ -106,6 +109,12 @@ bool ProximitySensorSaysStop () {
 	int PROXIMITY_POWER_CUTOFF = 60;
 	int left_power = IRmax_sig(ir);
 	int right_power = IRmax_sig(ir1);
+
+	if (left_power == 0
+		|| right_power == 0
+		|| (left_power < PROXIMITY_POWER_CUTOFF
+		   && right_power < PROXIMITY_POWER_CUTOFF))
+		writeDebugStreamLine("STOP");
 
 	return left_power == 0
 		|| right_power == 0
