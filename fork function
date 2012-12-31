@@ -1,0 +1,22 @@
+//all the functions etc
+
+void fork_go_up () {
+
+ }
+
+void fork_go_down () {
+
+}
+
+void operate_fork () {
+  int counter = 0;
+
+  if (joy2Btn(8)
+      && counter == 0) {
+    fork_go_up ();
+    ++counter;
+  }
+  if (joy2Btn(8)) {
+    fork_go_down ();
+  }
+}
