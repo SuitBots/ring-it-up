@@ -57,7 +57,7 @@ long BackUpAmount (peg_t column) {
 }
 
 /// @returns the amount we should drive forward in phase 2 for each column
-long Forward2Amount(peg_t column) {
+long SecondForward(peg_t column) {
 	if (column == left) {
 		return 300; // tune it
 	}
@@ -72,7 +72,7 @@ long Forward2Amount(peg_t column) {
 
 
 /// @returns the amount we should drive forward to address the column
-long Forward3Amount(peg_t column) {
+long ThirdForward(peg_t column) {
 	if (column == left) {
 		return 300; // tune it
 	}
@@ -144,13 +144,13 @@ void IRAutonomous () {
 	int column = FindTheColumnThatTheIRBeaconIsOn();
 	DeadReckoningDriveForward(InitialForward(column));
 	TurnLeftThisManyDegrees(45.0);
-	DeadReckoningDriveForward(Forward2Amount(column));
+	DeadReckoningDriveForward(SecondForward(column));
 	RaiseTheScissorToPeg1Level ();
 	GuidedDriveForward ();
 	DropScissorLift ();
 	DeadReckoningDriveForward(BackUpAmount(column));
 	TurnLeftThisManyDegrees(135.0);
-	DeadReckoningDriveForward(Forward3Amount(column));
+	DeadReckoningDriveForward(ThirdForward(column));
 }
 
 task main() {
