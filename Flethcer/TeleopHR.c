@@ -51,8 +51,8 @@ void drive() {
 	int crawlRate = 25;  // adjust this for a different crawl rate
 	int leftMotorVal = J1Y2 + J1X2;
 	int rightMotorVal = J1Y2 - J1X2;
-	int expLeftMotorVal = pow(10, ((((leftMotorVal * 2) / 255) - 1) * ((leftMotorVal / (leftMotorVal * -1)) * -1)));
-	int expRightMotorVal = pow(10, ((((rightMotorVal * 2) / 255) - 1) * ((rightMotorVal / (rightMotorVal * -1)) * -1)));
+	int expLeftMotorVal = pow(10, (((((leftMotorVal * 2) / 255) * ((leftMotorVal / (leftMotorVal * -1)) * -1))) - 1));
+	int expRightMotorVal = pow(10, (((((rightMotorVal * 2) / 255) * ((rightMotorVal / (rightMotorVal * -1)) * -1))) - 1));
 
 	if (joy1Btn(6)){
 		SetMotor(ML, expLeftMotorVal / crawlRate);  // crawl rate means that it'll go slowly if the driver
