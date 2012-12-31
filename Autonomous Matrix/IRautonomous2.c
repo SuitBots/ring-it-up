@@ -101,18 +101,6 @@ void DropScissorLift () {
 	forward(100, 300000, true, ScissorL2, ScissorR2);
 }
 
-/// @returns the power reading from the left IR sensor
-int LeftIRPower () {
-	// TODO
-	return 100;
-}
-
-/// @returns the power reading from the right IR sensor
-int RightIRPower () {
-	// TODO
-	return 100;
-}
-
 // Returns true when we're close enough to the peg to stop
 bool ProximitySensorSaysStop () {
 	int PROXIMITY_POWER_CUTOFF = 60;
@@ -137,8 +125,8 @@ void GuidedDriveForward () {
 	int DEFAULT_MOTOR_SPEED = 100;
 	int POWER_DIFF_THRESHOLD = 10;
 	while(! ProximitySensorSaysStop ()) {
-		int left_power = LeftIRPower ();
-		int right_power = RightIRPower ();
+		int left_power = IRmax_sig(ir);
+		int right_power = IRmax_sig(ir1);
 		int left_motor_speed = DEFAULT_MOTOR_SPEED;
 		int right_motor_speed = DEFAULT_MOTOR_SPEED;
 
