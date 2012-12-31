@@ -113,10 +113,11 @@ int RightIRPower () {
 	return 100;
 }
 
-bool ApproximiateProximitySensorUsingIRSensors () {
+// Returns true when we're close enough to the peg to stop
+bool ProximitySensorSaysStop () {
 	int PROXIMITY_POWER_CUTOFF = 60;
-	int left_power = LeftIRPower ();
-	int right_power = RightIRPower ();
+	int left_power = IRmax_sig(ir);
+	int right_power = IRmax_sig(ir1);
 
 	return left_power == 0
 		|| right_power == 0
@@ -124,15 +125,10 @@ bool ApproximiateProximitySensorUsingIRSensors () {
 		   && right_power < PROXIMITY_POWER_CUTOFF);
 }
 
-// Returns true when we're close enough to the peg to stop
-bool ProximitySensorSaysStop () {
-	// TODO for an actual proximity sensor
-	return ApproximiateProximitySensorUsingIRSensors ();
-}
-
 
 void MoveForwardWithSpeeds(int left, int right) {
-
+	motor[ML] = left;
+	motor[MR] = right;
 }
 
 // Uses IR Sensors to make sure we're lined up left-to-right
@@ -170,5 +166,5 @@ void IRAutonomous () {
 }
 
 task main() {
-
+	IRAutonomous();
 }

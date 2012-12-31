@@ -20,65 +20,13 @@ void rememberHandPosition (char hand) {
 	AddToDatalog(0, hand_position);
 }
 
-//int irDirection (char sensor) {
-//	int _dirAC = 0;
-//	int acS1, acS2, acS3, acS4, acS5 = 0;
-
-
-//	tHTIRS2DSPMode _mode = DSP_1200;
-
-//	if (HTIRS2setDSPMode(sensor, _mode) == 0) {
-
-//		eraseDisplay();
-//		nxtDisplayCenteredTextLine(0, "ERROR!");
-//		nxtDisplayCenteredTextLine(2, "Init failed!");
-//		nxtDisplayCenteredTextLine(3, "Connect sensor properly");
-
-
-//		PlaySound(soundBeepBeep);
-
-//		wait10Msec(300);
-//		return 0;
-//	}
-
-//	_dirAC = HTIRS2readACDir(sensor);
-
-//	if (_dirAC < 0) {
-//		writeDebugStreamLine("Read dir ERROR!");
-//		return 0;
-//	}
-
-//	if (!HTIRS2readAllACStrength(sensor, acS1, acS2, acS3, acS4, acS5 )) {
-//		writeDebugStreamLine("Read sig ERROR!");
-//		return 0;
-//	}
-//	return _dirAC;
-//}
-
-//int reversed_ir_sensor(int sensorVal) {
-//	int x = sensorVal * -1 + 10;
-//	return x;
-//}
-
-typedef enum {left = 0, middle, right} peg_t;
-
-// Dear Hunter,
-//  This isn't that complicated.  I'll explain it to you if you ask.
-// for now, I can give you an example that might clear it up:
-//
-//   typedef enum {true = 0, false} bool;
-//
-//  Sincerely,
-//   Fletcher
-//
-
 void forward(short power, long distance, bool direction, char DrivL, char DrivR) {  //direction should be True for forward and False for backward
 	int directional_power = (-2 * direction + 1) * power;
 
 	while ((nMotorEncoder[DrivL] < distance
-		      && nMotorEncoder[DrivR] < distance)
-	       || (nMotorEncoder[DrivL] > distance * -1
-	        && nMotorEncoder[DrivR] > distance * -1))  {
+		&& nMotorEncoder[DrivR] < distance)
+	|| (nMotorEncoder[DrivL] > distance * -1
+	&& nMotorEncoder[DrivR] > distance * -1))  {
 		motor[DrivL] = directional_power;
 		motor[DrivR] = directional_power;
 	}
@@ -114,6 +62,19 @@ void pivotTurn(short power, int degree, bool direction, char DrivL, char DrivR) 
 	}
 }
 
+
+typedef enum {left = 0, middle, right} peg_t;
+
+// Dear Hunter,
+//  This isn't that complicated.  I'll explain it to you if you ask.
+// for now, I can give you an example that might clear it up:
+//
+//   typedef enum {true = 0, false} bool;
+//
+//  Sincerely,
+//   Fletcher
+//
+
 int IRSensorRegion (char sensorName, bool reversed) {  // include these commented lines when applied in the code
 	int _dirAC = 0;
 	//int acS1, acS2, acS3, acS4, acS5 = 0;
@@ -137,10 +98,29 @@ int IRSensorRegion (char sensorName, bool reversed) {  // include these commente
 	return _dirAC;
 }
 
+int IRmax_sig (char sensor) {
+	int acS1, acS2, acS3, acS4, acS5 = 0;
+	int maxSig = 0;
+
+	if (!HTIRS2readAllACStrength(sensor, acS1, acS2, acS3, acS4, acS5 )) {
+		// error! - write to debug stream and then break.
+		writeDebugStreamLine("Read sig ERROR!");
+
+	}  else {
+		// find the max signal strength of all detectors.
+		maxSig = (acS1 > acS2) ? acS1 : acS2;
+		maxSig = (maxSig > acS3) ? maxSig : acS3;
+		maxSig = (maxSig > acS4) ? maxSig : acS4;
+		maxSig = (maxSig > acS5) ? maxSig : acS5;
+	}
+
+	return maxSig;
+}
+
 peg_t dondePeg(char sensor1, char sensor2) {
 	// This assumes the edge of the robot is 21" from the edge of field, like this
 	//
-  // |                   +-----+         +---------+
+	// |                   +-----+         +---------+
 	// | |---   21"   ---| |Robot|         |Dispenser|
 	// +-------------------+-----+---~ ~---+---------+--
 	//
@@ -150,15 +130,15 @@ peg_t dondePeg(char sensor1, char sensor2) {
 	int sensor1state = IRSensorRegion(sensor1, false);
 	int sensor2state = IRSensorRegion(sensor2, false);
 	if (sensor1state == 5
-		  && sensor2state == 5) {
+		&& sensor2state == 5) {
 		peg = right;
 	}
 	if (sensor1state == 6
-		  && sensor2state == 6) {
+		&& sensor2state == 6) {
 		peg = middle;
 	}
 	if (sensor1state == 7
-		  && sensor2state == 7) {
+		&& sensor2state == 7) {
 		peg = left;
 	}
 	else peg = middle;
