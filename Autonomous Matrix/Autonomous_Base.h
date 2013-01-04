@@ -15,31 +15,35 @@ void initializeRobot(char DrivL, char DrivR, char HndL, char HndR, char scsrL, c
 	nMotorEncoder[scsrR] = 0;
 }
 
-void rememberHandPosition (char hand) {
-	long hand_position = nMotorEncoder[hand];
-	AddToDatalog(0, hand_position);
-}
-
 void forward(short power, long distance, bool direction, char DrivL, char DrivR) {  //direction should be True for forward and False for backward
-	int directional_power = (-2 * direction + 1) * power;
-
+	int directional_power = power * (direction ? -1 : 1);
+	nMotorEncoder[DrivL] = nMotorEncoder[DrivR] = 0;
 	while ((nMotorEncoder[DrivL] < distance
-		&& nMotorEncoder[DrivR] < distance)
-	|| (nMotorEncoder[DrivL] > distance * -1
-	&& nMotorEncoder[DrivR] > distance * -1))  {
+		      && nMotorEncoder[DrivR] < distance
+		      && direction == true)
+	       || (nMotorEncoder[DrivL] > distance * -1
+	        && nMotorEncoder[DrivR] > distance * -1
+	        && direction == false))  {
 		motor[DrivL] = directional_power;
 		motor[DrivR] = directional_power;
 	}
+	motor[DrivL] = motor[DrivR] = 0;
 }
 
 void swingTurn(short power, int degree, bool direction, char DrivL, char DrivR) {  //True for left, False for right
-	float rotations_ratio = degree / 360;  //This ratio will need to be adjusted
+	int directional_power = power * (direction ? 1 : -1);
+	nMotorEncoder[DrivL] = nMotorEncoder[DrivR] = 0;
 
-	motor[DrivL] = (! direction) * power;
-	motor[DrivR] = direction * power;
-
-	nMotorEncoderTarget[DrivL] = rotations_ratio;
-	nMotorEncoderTarget[DrivR] = rotations_ratio;
+	while ((nMotorEncoder[DrivL] < degree
+		      && nMotorEncoder[DrivR] > - degree
+		      && direction == true)
+	       || (nMotorEncoder[DrivL] > - degree
+	        && nMotorEncoder[DrivR] < degree
+	        && direction == false))  {
+	  motor[DrivL] = directional_power;
+	  motor[DrivR] = - directional_power;
+	}
+	motor[DrivL] = motor[DrivR] = 0;
 
 }
 
@@ -125,21 +129,19 @@ peg_t dondePeg(char sensor1, char sensor2) {
 	// +-------------------+-----+---~ ~---+---------+--
 	//
 
-	peg_t peg;
+	peg_t peg = middle;
 
 	int sensor1state = IRSensorRegion(sensor1, false);
 	int sensor2state = IRSensorRegion(sensor2, false);
+
+
 	if (sensor1state == 5
 		&& sensor2state == 5) {
-		peg = right;
-	}
-	if (sensor1state == 6
-		&& sensor2state == 6) {
-		peg = middle;
-	}
-	if (sensor1state == 7
-		&& sensor2state == 7) {
 		peg = left;
+	}
+	else if (sensor1state == 7
+		&& sensor2state == 7) {
+		peg = right;
 	}
 	else peg = middle;
 
