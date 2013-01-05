@@ -45,27 +45,27 @@ void DeadReckoningDriveForwardCM(long amount) {
 
 /// @returns the amount we should drive forward in phase 1 for each column
 long InitialForward(peg_t column) {
-	if (column == left) {
+	if (column == LEFT) {
 		return 150; // tune it
 	}
-	if (column == middle) {
-		return 20; // tune it
+	if (column == MIDDLE) {
+		return 83; // tune it
 	}
-	if (column == right) {
-		return 5; // tune it
+	if (column == RIGHT) {
+		return 0; // tune it
 	}
 	else return -5; // tune it
 }
 
 /// @returns the amount we should back up from our column to get to the dispensor
 long BackUpAmount (peg_t column) {
-	if (column == left) {
+	if (column == LEFT) {
 		return -300; // tune it
 	}
-	if (column == middle) {
+	if (column == MIDDLE) {
 		return -200; // tune it
 	}
-	if (column == right) {
+	if (column == RIGHT) {
 		return -100; // tune it
 	}
 	else return -200; // tune it
@@ -73,14 +73,11 @@ long BackUpAmount (peg_t column) {
 
 /// @returns the amount we should drive forward in phase 2 for each column
 long SecondForward(peg_t column) {
-	if (column == left) {
-		return 300; // tune it
+	if (column == LEFT) {
+		return 30; // tune it
 	}
-	if (column == middle) {
-		return 200; // tune it
-	}
-	if (column == right) {
-		return 100; // tune it
+	if (column == MIDDLE) {
+		return 20; // tune it
 	}
 	else return 200; // tune it
 }
@@ -88,29 +85,47 @@ long SecondForward(peg_t column) {
 
 /// @returns the amount we should drive forward to address the column
 long ThirdForward(peg_t column) {
-	if (column == left) {
+	if (column == LEFT) {
 		return 300; // tune it
 	}
-	if (column == middle) {
+	if (column == MIDDLE) {
 		return 200; // tune it
 	}
-	if (column == right) {
+	if (column == RIGHT) {
 		return 100; // tune it
 	}
 	else return 200; // tune it
 }
 
+int FirstTurn(peg_t column) {
+	if (column == LEFT)
+		return 30;
+
+	if (column == MIDDLE)
+		return 45;
+
+	if (column == RIGHT)
+		return 25;
+
+	else return 0;
+}
+
 void TurnLeftThisManyDegrees (int degrees) {
-	float scale_factor = 37;
+	float scale_factor = 75;
 	int abs_degrees = abs(degrees);
 	swingTurn(100, abs_degrees * scale_factor, degrees > 0, ML, MR);
+}
+
+void RightColumnSpecialCase() {
+	DeadReckoningDriveForwardCM(65);
+	TurnLeftThisManyDegrees(-20);
 }
 
 // Raises the scissor lift to the correct level for peg 1
 // Also tilts the hand forward
 void RaiseTheScissorToPeg1Level () {
-	forward(100, 300000, false, ScissorL1, ScissorR1); //tune the 300000 in both of these
-	forward(100, 300000, false, ScissorL2, ScissorR2);
+	forward(100, 300, true, ScissorL1, ScissorR1); //tune the 300000 in both of these
+	forward(100, 300, true, ScissorL2, ScissorR2);
 }
 
 void DropScissorLift () {
@@ -166,10 +181,10 @@ void GuidedDriveForward () {
 void IRAutonomous () {
 	peg_t column = FindTheColumnThatTheIRBeaconIsOn();
   DeadReckoningDriveForwardCM(InitialForward(column));
-	//DeadReckoningDriveForwardCM(90);
-	//TurnLeftThisManyDegrees(-45);
-	//DeadReckoningDriveForward(SecondForward(column));
-	//RaiseTheScissorToPeg1Level ();
+	TurnLeftThisManyDegrees(FirstTurn(column));
+	if (column == RIGHT)
+		RightColumnSpecialCase();
+	RaiseTheScissorToPeg1Level ();
 	//GuidedDriveForward ();
 	//DropScissorLift ();
 	//DeadReckoningDriveForward(BackUpAmount(column));
