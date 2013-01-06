@@ -25,175 +25,133 @@
 #include "Autonomous_Base.h"
 
 void initializeRobot() {
-	return;
+  return;
 }
 
 /// @returns 0 for the left column, 1 for middle, 2 for right
 peg_t FindTheColumnThatTheIRBeaconIsOn() {
-	peg_t peg = dondePeg(ir, ir1);
-	return peg;
+  peg_t peg = dondePeg(ir, ir1);
+  return peg;
 }
 
 void DeadReckoningDriveForwardCM(long amount) {
-	float scale_factor = 68.8973;
-	bool direction = amount > 0;
-	amount = abs(amount);
-	//motor[ML] = motor[MR] = 100;
-	//wait1Msec(1000);
-	forward(100, amount * scale_factor, direction, ML, MR);
-}
-
-/// @returns the amount we should drive forward in phase 1 for each column
-long InitialForward(peg_t column) {
-	if (column == LEFT) {
-		return 150; // tune it
-	}
-	if (column == MIDDLE) {
-		return 83; // tune it
-	}
-	if (column == RIGHT) {
-		return 0; // tune it
-	}
-	else return -5; // tune it
-}
-
-/// @returns the amount we should back up from our column to get to the dispensor
-long BackUpAmount (peg_t column) {
-	if (column == LEFT) {
-		return -300; // tune it
-	}
-	if (column == MIDDLE) {
-		return -200; // tune it
-	}
-	if (column == RIGHT) {
-		return -100; // tune it
-	}
-	else return -200; // tune it
-}
-
-/// @returns the amount we should drive forward in phase 2 for each column
-long SecondForward(peg_t column) {
-	if (column == LEFT) {
-		return 30; // tune it
-	}
-	if (column == MIDDLE) {
-		return 20; // tune it
-	}
-	else return 200; // tune it
-}
-
-
-/// @returns the amount we should drive forward to address the column
-long ThirdForward(peg_t column) {
-	if (column == LEFT) {
-		return 300; // tune it
-	}
-	if (column == MIDDLE) {
-		return 200; // tune it
-	}
-	if (column == RIGHT) {
-		return 100; // tune it
-	}
-	else return 200; // tune it
-}
-
-int FirstTurn(peg_t column) {
-	if (column == LEFT)
-		return 30;
-
-	if (column == MIDDLE)
-		return 45;
-
-	if (column == RIGHT)
-		return 25;
-
-	else return 0;
+  const float SCALE_FACTOR = 68.8973;
+  bool direction = amount > 0;
+  amount = abs(amount);
+  forward(100, amount * SCALE_FACTOR, direction, ML, MR);
 }
 
 void TurnLeftThisManyDegrees (int degrees) {
-	float scale_factor = 75;
-	int abs_degrees = abs(degrees);
-	swingTurn(100, abs_degrees * scale_factor, degrees > 0, ML, MR);
+  const float SCALE_FACTOR = 37;
+  int abs_degrees = abs(degrees);
+  swingTurn(100, abs_degrees * SCALE_FACTOR, degrees > 0, ML, MR);
 }
 
-void RightColumnSpecialCase() {
-	DeadReckoningDriveForwardCM(65);
-	TurnLeftThisManyDegrees(-20);
-}
+void GoForward (const long cm) { DeadReckoningDriveForward (cm); }
+void GoBackwards (const long cm) { DeadReckoningDriveForward (-cm); }
+void TurnLeft (const int degrees) { TurnLeftThisManyDegrees (degrees); }
+void TurnRight (const int degrees) { TurnLeftThisManyDegrees (-degrees); }
 
 // Raises the scissor lift to the correct level for peg 1
 // Also tilts the hand forward
-void RaiseTheScissorToPeg1Level () {
-	forward(100, 300, true, ScissorL1, ScissorR1); //tune the 300000 in both of these
-	forward(100, 300, true, ScissorL2, ScissorR2);
+void RaiseTheScissorToPeg1Level ()
+{ // todo: find how many turns it takes and use a constant
+  const int scissor_travel_amt = 300;
+  forward(100, scissor_travel_amt, true, ScissorL1, ScissorR1);
+  forward(100, scissor_Travel_amt, true, ScissorL2, ScissorR2);
 }
 
-void DropScissorLift () {
-	forward(100, 300000, true, ScissorL1, ScissorR1); //tune the 300000 in both of these
-	forward(100, 300000, true, ScissorL2, ScissorR2);
+// Lowers the scissor to the level where they need to be to grab a ring
+void DropScissorLift ()
+{ // todo: find how many turns it takes and use a constant
+  const int scissor_travel_amt = 300;
+  forward(100, scissor_travel_amt, false, ScissorL1, ScissorR1);
+  forward(100, scissor_Travel_amt, false, ScissorL2, ScissorR2);
 }
 
 // Returns true when we're close enough to the peg to stop
 bool ProximitySensorSaysStop () {
-	int PROXIMITY_POWER_CUTOFF = 60;
-	int left_power = IRmax_sig(ir);
-	int right_power = IRmax_sig(ir1);
+  int PROXIMITY_POWER_CUTOFF = 60;
+  int left_power = IRmax_sig(ir);
+  int right_power = IRmax_sig(ir1);
 
-	if (left_power == 0
-		|| right_power == 0
-		|| (left_power < PROXIMITY_POWER_CUTOFF
-		   && right_power < PROXIMITY_POWER_CUTOFF))
-		writeDebugStreamLine("STOP");
+  if (left_power == 0
+      || right_power == 0
+      || (left_power < PROXIMITY_POWER_CUTOFF
+          && right_power < PROXIMITY_POWER_CUTOFF))
+    writeDebugStreamLine("STOP");
 
-	return left_power == 0
-		|| right_power == 0
-		|| (left_power < PROXIMITY_POWER_CUTOFF
-		   && right_power < PROXIMITY_POWER_CUTOFF);
-}
-
-
-void MoveForwardWithSpeeds(int left, int right) {
-	motor[ML] = left;
-	motor[MR] = right;
+  return left_power == 0
+    || right_power == 0
+    || (left_power < PROXIMITY_POWER_CUTOFF
+        && right_power < PROXIMITY_POWER_CUTOFF);
 }
 
 // Uses IR Sensors to make sure we're lined up left-to-right
 // Uses a proximity sensor to know when to stop
 void GuidedDriveForward () {
-	int DEFAULT_MOTOR_SPEED = 100;
-	int POWER_DIFF_THRESHOLD = 10;
-	while(! ProximitySensorSaysStop ()) {
-		int left_power = IRmax_sig(ir);
-		int right_power = IRmax_sig(ir1);
-		int left_motor_speed = DEFAULT_MOTOR_SPEED;
-		int right_motor_speed = DEFAULT_MOTOR_SPEED;
+  int DEFAULT_MOTOR_SPEED = 100;
+  int POWER_DIFF_THRESHOLD = 10;
+  while(! ProximitySensorSaysStop ()) {
+    int left_power = IRmax_sig(ir);
+    int right_power = IRmax_sig(ir1);
+    int left_motor_speed = DEFAULT_MOTOR_SPEED;
+    int right_motor_speed = DEFAULT_MOTOR_SPEED;
 
-		int power_diff = left_power - right_power;
-		if(abs(power_diff) > POWER_DIFF_THRESHOLD) {
-			left_motor_speed -= power_diff;
-			right_motor_speed += power_diff;
-		}
+    int power_diff = left_power - right_power;
+    if(abs(power_diff) > POWER_DIFF_THRESHOLD) {
+      left_motor_speed -= power_diff;
+      right_motor_speed += power_diff;
+    }
 
-		MoveForwardWithSpeeds(left_motor_speed, right_motor_speed);
-	}
+    motor[ML] = left_motor_speed;
+    motor[MR] = right_motor_speed;
+  }
+}
+
+void DriveToPegLeft ()
+{ GoForward (150.0);
+  TurnRight (45.0);
+  // GoForward (30.0);
+}
+
+void DriveToPegMiddle ()
+{ GoForward (83.0);
+  TurnRight (45.0);
+  // GoForward (20.0);
+}
+
+void DriveToPegRight ()
+{ GoForward (65.0);
+  TurnRight (20.0);
+}
+
+void DriveToPeg (peg_t column)
+{ if (LEFT == column)
+    DriveToPegLeft ();
+  else if (MIDDLE == column)
+    DriveToPegMiddle ();
+  else if (RIGHT == column)
+    DriveToPegRight ();
+}
+
+void DriveToDispensor (peg_t column)
+{ // todo
 }
 
 void IRAutonomous () {
-	peg_t column = FindTheColumnThatTheIRBeaconIsOn();
-  DeadReckoningDriveForwardCM(InitialForward(column));
-	TurnLeftThisManyDegrees(FirstTurn(column));
-	if (column == RIGHT)
-		RightColumnSpecialCase();
-	RaiseTheScissorToPeg1Level ();
-	//GuidedDriveForward ();
-	//DropScissorLift ();
-	//DeadReckoningDriveForward(BackUpAmount(column));
-	//TurnLeftThisManyDegrees(135.0);
-	//DeadReckoningDriveForward(ThirdForward(column));
+  peg_t column = FindTheColumnThatTheIRBeaconIsOn();
+  DriveToPeg (column);
+  RaiseTheScissorToPeg1Level ();
+  GuidedDriveForward ();
+  /* TODO: Calibrate to this point and then move forward
+    DropScissorLift ();
+    DriveToDispensor (column);
+  */
 }
 
 task main() {
-	initializeRobot();
-	waitForStart();
-	IRAutonomous();
+  initializeRobot();
+  waitForStart();
+  IRAutonomous();
 }
