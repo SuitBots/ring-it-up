@@ -111,19 +111,13 @@ void operate_hand_vertical() {
 		servo[hand_vertical] = 60; //tune it
 }
 
-void operate_fork_assemblyup() {
-
-	if (joystick.joy2_TopHat == 2) {
-		SetMotor(fork, -100);
-	}
-	else
-		SetMotor(fork, 0);
-}
-
 void operate_fork_assemblydown() {
 
 	if (joystick.joy2_TopHat == 6) {
 		SetMotor(fork, 100);
+	}
+	else if (joystick.joy2_TopHat == 2) {
+		SetMotor(fork, -100);
 	}
 	else
 		SetMotor(fork, 0);
@@ -194,8 +188,8 @@ task movement()
 	//operate_fork();
 	//test();
 	adj();
-	operate_fork_assemblyup();
 	operate_fork_assemblydown();
+
 }
 
 
@@ -207,6 +201,7 @@ task accessories()
 	nMotorEncoder[HandL] = 0;
 
 	operateLR();
+	operate_fork_assemblyup();
 
 	int hand_ritard = 2.75;
 
