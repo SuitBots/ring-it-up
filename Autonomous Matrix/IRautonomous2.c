@@ -40,7 +40,7 @@ void DeadReckoningDriveForwardCM(long amount) {
 /// @returns the amount we should drive forward in phase 1 for each column
 long InitialForward(peg_t column) {
 	if (column == LEFT) {
-		return 130; // tune it
+		return 129; // tune it
 	}
 	if (column == MIDDLE) {
 		return 45; // tune it
@@ -73,7 +73,7 @@ long second_distance(peg_t column) {
 		return 115; // tune it
 	}
 	if (column == RIGHT) {
-		return 110; // tune it
+		return 105; // tune it
 	}
 	else return 110; // tune it
 }
@@ -83,10 +83,10 @@ int FirstTurn(peg_t column) {
 		return 25;
 
 	if (column == MIDDLE)
-		return 25;
+		return 24;
 
 	if (column == RIGHT)
-		return 40;
+		return 50;
 
 	else return 0;
 }
@@ -105,8 +105,8 @@ void TurnLeftThisManyDegrees (int degrees) {
 }
 
 void RightColumnSpecialCase() {
-	DeadReckoningDriveForwardCM(45);
-	TurnLeftThisManyDegrees(-26);
+	DeadReckoningDriveForwardCM(34);
+	TurnLeftThisManyDegrees(-24);
 	//TurnLeftThisManyDegrees(0);
 }
 

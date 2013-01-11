@@ -201,7 +201,7 @@ task accessories()
 	nMotorEncoder[HandL] = 0;
 
 	operateLR();
-	operate_fork_assemblyup();
+	operate_fork_assemblydown();
 
 	int hand_ritard = 2.75;
 
