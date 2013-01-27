@@ -67,7 +67,8 @@ void pivotTurn(short power, int degree, bool direction, char DrivL, char DrivR) 
 }
 
 
-typedef enum {LEFT = 0, MIDDLE, RIGHT} peg_t;
+typedef enum { LEFT = 0, MIDDLE, RIGHT } peg_t;
+typedef enum { RED, BLUE } side_t;
 
 // Dear Hunter,
 //  This isn't that complicated.  I'll explain it to you if you ask.
