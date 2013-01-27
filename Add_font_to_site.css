@@ -1,0 +1,10 @@
+<style type="text/css">
+@font-face {
+    font-family: "Libel Suit";
+    src: url(http://www.suitbots.com/libel_suit.ttf) format("truetype"); // It'll have to be put on the website
+}  // It might be better if the non-ttf version of the font is used
+p.customfont { 
+    font-family: "Libel Suit", Verdana, Tahoma;
+}
+</style>
+<p class="customfont">Hello world!</p>
