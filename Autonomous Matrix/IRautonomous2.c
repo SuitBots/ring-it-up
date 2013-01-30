@@ -15,6 +15,7 @@
 
 #include "JoystickDriver.c"
 #include "Autonomous_Base.h"
+#include "Drive_to_dispenser_interface.h"
 
 
 void initializeRobot() {
@@ -50,25 +51,25 @@ int AveragePower () {
 	return (IRmax_sig (ir) + IRmax_sig(ir1)) / 2;
 }
 
-typedef struct {
-	int power0;
-	int power1;
-}  powers_t;
+//typedef struct {
+//	int power0;
+//	int power1;
+//}  powers_t;
 
-void GetPowers (powers_t *ret) {  // this function will get two data points.  For it we'll have to find the maximum speed of the robot
-	ret -> power0 = AveragePower();
-	int time_diff = 10; // this ought to equal the distance we want it to check divided by the speed of the robot
+//void GetPowers (powers_t *ret) {  // this function will get two data points.  For it we'll have to find the maximum speed of the robot
+//	ret -> power0 = AveragePower();
+//	int time_diff = 10; // this ought to equal the distance we want it to check divided by the speed of the robot
 
-	static bool good_to_stop = false;
+//	static bool good_to_stop = false;
 
-	wait10Msec(time_diff);
+//	wait10Msec(time_diff);
 
-	ret -> power1 = AveragePower();
+//	ret -> power1 = AveragePower();
 
-	int POWER_DIFF_THRESHOLD = 20;
-	if ((power0 - 20) > power1)
-		good_to_stop = true;
-}
+//	int POWER_DIFF_THRESHOLD = 20;
+//	if ((power0 - 20) > power1)
+//		good_to_stop = true;
+//}
 
 // Returns true when we're close enough to the peg to stop
 static int beginning_power_reading = 0;
