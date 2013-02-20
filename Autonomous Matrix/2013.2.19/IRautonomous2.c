@@ -15,7 +15,7 @@
 
 #include "JoystickDriver.c"
 #include "Autonomous_Base.h"
-//#include "Drive_to_dispenser_interface.h"
+#include "Drive_to_dispenser_interface.h"
 
 
 void initializeRobot() {
@@ -37,15 +37,15 @@ void DeadReckoningDriveForwardCM(long amount) {
 }
 
 void TurnLeftThisManyDegrees (int degrees) {
-	const float SCALE_FACTOR = 30;
+	const float SCALE_FACTOR = 75;
 	int abs_degrees = abs(degrees);
 	swingTurn(100, abs_degrees * SCALE_FACTOR, degrees > 0, ML, MR);
 }
 
 void GoForward (const long cm) { DeadReckoningDriveForwardCM (cm); }
 void GoBackwards (const long cm) { DeadReckoningDriveForwardCM (-cm); }
-void TurnLeft (const int degrees) { TurnLeftThisManyDegrees (-degrees); }
-void TurnRight (const int degrees) { TurnLeftThisManyDegrees (degrees); }
+void TurnLeft (const int degrees) { TurnLeftThisManyDegrees (degrees); }
+void TurnRight (const int degrees) { TurnLeftThisManyDegrees (-degrees); }
 
 int AveragePower () {
 	return (IRmax_sig (ir) + IRmax_sig(ir1)) / 2;
@@ -81,7 +81,7 @@ bool ProximitySensorSaysStop (int *last_power, bool check_power) {
 	int cur_power = (left_power + right_power) / 2;
 
 	if (check_power) {
-		int POWER_DIFF_THRESHOLD = 30;
+		int POWER_DIFF_THRESHOLD = 20;
 		if (*last_power - POWER_DIFF_THRESHOLD > cur_power)
 			return true;
   	*last_power = cur_power;
@@ -105,16 +105,16 @@ bool FailSafeTargetReached (long max_fwd) {
 // Uses IR Sensors to make sure we're lined up left-to-right
 void GuidedDriveForward (long max_fwd) {
 	nMotorEncoder[ML] = nMotorEncoder[MR] = 0;
-	int DEFAULT_MOTOR_SPEED = 70;
-	int POWER_DIFF_THRESHOLD = 4;
+	int DEFAULT_MOTOR_SPEED = 100;
+	int POWER_DIFF_THRESHOLD = 10;
 	int last_power = AveragePower ();
 	int tenths_to_wait = 0;
 	ClearTimer(T1);
 	while(! (ProximitySensorSaysStop (&last_power, time100[T1] > tenths_to_wait) || FailSafeTargetReached (max_fwd)) ) {
-		int left_power = IRmax_sig(ir) / 2;
-		int right_power = IRmax_sig(ir1) / 2;
-		int right_motor_speed = DEFAULT_MOTOR_SPEED;
+		int left_power = IRmax_sig(ir);
+		int right_power = IRmax_sig(ir1);
 		int left_motor_speed = DEFAULT_MOTOR_SPEED;
+		int right_motor_speed = DEFAULT_MOTOR_SPEED;
 
 		int power_diff = left_power - right_power;
 		if(abs(power_diff) > POWER_DIFF_THRESHOLD) {
@@ -124,8 +124,8 @@ void GuidedDriveForward (long max_fwd) {
 			right_motor_speed = DEFAULT_MOTOR_SPEED - abs(power_diff) + power_diff;
 		}
 
-		motor[ML] = -left_motor_speed;
-		motor[MR] = -right_motor_speed;
+		motor[ML] = left_motor_speed;
+		motor[MR] = right_motor_speed;
 
 		if (time100[T1] > tenths_to_wait)
 			ClearTimer(T1);
@@ -134,24 +134,16 @@ void GuidedDriveForward (long max_fwd) {
 }
 
 void DropHand () {
-	servo[hand_vertical] = 180;
+	servo[hand_vertical] = 180.0;
 }
 
-void RaiseHand () {
-	servo[hand_vertical] = 10;
-	nSyncedMotors = synchAB;
-	while (nMotorEncoder[HandL] < 900) {
-		motor[HandL] = 75;
-	}
-}
-
-static bool USE_GUIDED_FWD = true;
+static bool USE_GUIDED_FWD = false;
 
 void DriveToPegLeft ()
 { GoForward (129);
 	TurnRight (25);
 	if (USE_GUIDED_FWD)
-		GuidedDriveForward (320);
+		GuidedDriveForward (60);
 	else
 		GoForward (60);
 	DropHand ();
@@ -159,11 +151,11 @@ void DriveToPegLeft ()
 }
 
 void DriveToPegMiddle ()
-{ GoForward (40);
-	TurnRight (50);
+{ GoForward (45);
+	TurnRight (24);
 	if (USE_GUIDED_FWD) {
-		GoForward (73);
-		GuidedDriveForward (40);
+		GoForward (55);
+		GuidedDriveForward (60);
 	} else
 		GoForward (115);
 
@@ -191,16 +183,16 @@ void DriveToPeg (peg_t column)
 	switch (column)
 	{
 		case LEFT:
-			USE_GUIDED_FWD = true;
 			DriveToPegLeft();
+			USE_GUIDED_FWD = true;
 			break;
 		case MIDDLE:
-			USE_GUIDED_FWD = true;
 			DriveToPegMiddle();
+			USE_GUIDED_FWD = true;
 			break;
 		case RIGHT:
-			USE_GUIDED_FWD = true;
 			DriveToPegRight();
+			USE_GUIDED_FWD = true;
 			break;
 		default:
 			DriveToPegMiddle();
@@ -220,7 +212,6 @@ void DriveToDispensor (peg_t column, side_t color)
 }
 
 void IRAutonomous () {
-	RaiseHand();
 	beginning_power_reading = AveragePower ();
 	peg_t column = FindTheColumnThatTheIRBeaconIsOn();
 	DriveToPeg (column);

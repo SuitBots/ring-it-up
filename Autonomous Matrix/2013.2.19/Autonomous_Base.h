@@ -137,7 +137,7 @@ peg_t dondePeg(char sensor1, char sensor2) {
 
 
 	if (sensor1state == 5
-		&& sensor2state == 6) {
+		&& sensor2state == 5) {
 		peg = LEFT;
 	}
 	else if (sensor1state == 7
