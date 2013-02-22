@@ -156,7 +156,7 @@ void DriveToPegLeft ()
 	if (USE_GUIDED_FWD)
 		GuidedDriveForward (320);
 	else
-		GoForward (50);
+		GoForward (60);
 	DropHand ();
 	GoBackwards (10);
 }
