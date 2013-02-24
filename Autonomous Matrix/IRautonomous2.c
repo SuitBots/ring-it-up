@@ -76,12 +76,15 @@ static int beginning_power_reading = 0;
 bool ProximitySensorSaysStop (int *last_power, bool check_power) {
 	int PROXIMITY_POWER_CUTOFF = beginning_power_reading / 4;
 
+	// TODO: Re-enable the proximity stop.
+	return false;
+
 	int left_power = IRmax_sig(ir);
 	int right_power = IRmax_sig(ir1);
 	int cur_power = (left_power + right_power) / 2;
 
 	if (check_power) {
-		int POWER_DIFF_THRESHOLD = 30;
+		int POWER_DIFF_THRESHOLD = 7000;
 		if (*last_power - POWER_DIFF_THRESHOLD > cur_power)
 			return true;
   	*last_power = cur_power;
@@ -140,16 +143,16 @@ void DropHand () {
 void RaiseHand () {
 	servo[hand_vertical] = 10;
 	nSyncedMotors = synchAB;
-	while (nMotorEncoder[HandL] < 900) {
-		motor[HandL] = 75;
-	}
+	//while (nMotorEncoder[HandL] < 50) {
+		//motor[HandL] = 75;
+	//}
 }
 
-static bool USE_GUIDED_FWD = true;
+static bool USE_GUIDED_FWD = false;
 
 void DriveToPegLeft ()
-{ GoForward (129);
-	TurnRight (25);
+{ GoForward (125);
+	TurnRight (57);
 	if (USE_GUIDED_FWD)
 		GuidedDriveForward (320);
 	else
@@ -160,10 +163,10 @@ void DriveToPegLeft ()
 
 void DriveToPegMiddle ()
 { GoForward (40);
-	TurnRight (50);
+	TurnRight (57);
 	if (USE_GUIDED_FWD) {
 		GoForward (73);
-		GuidedDriveForward (40);
+		GuidedDriveForward (42);
 	} else
 		GoForward (115);
 
@@ -191,15 +194,12 @@ void DriveToPeg (peg_t column)
 	switch (column)
 	{
 		case LEFT:
-			USE_GUIDED_FWD = true;
 			DriveToPegLeft();
 			break;
 		case MIDDLE:
-			USE_GUIDED_FWD = true;
 			DriveToPegMiddle();
 			break;
 		case RIGHT:
-			USE_GUIDED_FWD = true;
 			DriveToPegRight();
 			break;
 		default:

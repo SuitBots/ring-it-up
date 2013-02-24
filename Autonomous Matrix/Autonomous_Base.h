@@ -132,11 +132,14 @@ peg_t dondePeg(char sensor1, char sensor2) {
 
 	peg_t peg = MIDDLE;
 
+	// sensor 1 is: RIGHT
+	// sensor 2 is: LEFT
+
 	int sensor1state = IRSensorRegion(sensor1, false);
 	int sensor2state = IRSensorRegion(sensor2, false);
 
 
-	if (sensor1state == 5
+	if (sensor1state == 6
 		&& sensor2state == 6) {
 		peg = LEFT;
 	}
