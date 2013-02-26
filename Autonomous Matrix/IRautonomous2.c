@@ -60,6 +60,7 @@ void GuidedDriveForward (long max_fwd) {
   // TUNEABLE PARAMETERS
   const int DEFAULT_MOTOR_SPEED = 90;
   const int WAIT_BETWEEN_SAMPLES_MS = 20;
+  const int MAXIMUM_POWER_DIFF = 40;
   // END TUNEABLE PARAMETERS
 
   while (! FailSafeTargetReached (max_fwd)) {
@@ -69,10 +70,15 @@ void GuidedDriveForward (long max_fwd) {
     int left_motor_speed = DEFAULT_MOTOR_SPEED;
     
     int power_diff = left_power - right_power;
-    // Make sure that the far motor is always at DEFAULT_MOTOR_SPEED
-    // and the slow motor is at DEFAULT_MOTOR_SPEED - power_diff
-    left_motor_speed = DEFAULT_MOTOR_SPEED - abs(power_diff) - power_diff;
-    right_motor_speed = DEFAULT_MOTOR_SPEED - abs(power_diff) + power_diff;
+    // if the power difference is too big, it's likely that one of the
+    // senors has just dropped out.  Don't adjust from current course
+    // in this situation.
+    if (power_diff < MAXIMUM_POWER_DIFF) {
+      // Make sure that the far motor is always at DEFAULT_MOTOR_SPEED
+      // and the slow motor is at DEFAULT_MOTOR_SPEED - power_diff
+      left_motor_speed = DEFAULT_MOTOR_SPEED - abs(power_diff) - power_diff;
+      right_motor_speed = DEFAULT_MOTOR_SPEED - abs(power_diff) + power_diff;
+    }
     
     motor[ML] = -left_motor_speed;
     motor[MR] = -right_motor_speed;
@@ -132,6 +138,8 @@ void DriveToPeg (peg_t column)
     break;
   case MIDDLE:
     middle_guided = true;
+    // note: Fallthrough here is completely intentional.
+    // We want middle_guided to be set to true only 
   default: // also: middle
     DriveToPegMiddle(middle_guided);
     break;
