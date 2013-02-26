@@ -90,50 +90,50 @@ void RaiseHand () {
   nSyncedMotors = synchAB;
 }
 
-static bool USE_GUIDED_FWD = false;
-
-void DriveToPegLeft ()
+void DriveToPegLeft (bool use_guided)
 { GoForward (125);
   TurnRight (57);
-  if (USE_GUIDED_FWD)
+  if (use_guided)
     GuidedDriveForward (320);
   else
     GoForward (60);
 }
 
-void DriveToPegMiddle ()
+void DriveToPegMiddle (bool use_guided)
 { GoForward (40);
   TurnRight (57);
   GoForward (73);
-  if (USE_GUIDED_FWD)
+  if (use_guided)
     GuidedDriveForward (42);
   else
     GoForward (42);
 }
 
-void DriveToPegRight ()
+void DriveToPegRight (bool use_guided)
 { GoForward (5);
   TurnRight (50);
   GoForward (34);
   TurnLeft (24);
   GoForward (45);
-  if (USE_GUIDED_FWD)
+  if (use_guided)
     GuidedDriveForward (60);
   else
     GoForward (60);
 }
 
 void DriveToPeg (peg_t column)
-{
+{ bool middle_guided = false;
   switch (column) {
   case LEFT:
-    DriveToPegLeft();
+    DriveToPegLeft(true);
     break;
   case RIGHT:
-    DriveToPegRight();
+    DriveToPegRight(true);
     break;
+  case MIDDLE:
+    middle_guided = true;
   default: // also: middle
-    DriveToPegMiddle();
+    DriveToPegMiddle(middle_guided);
     break;
   }
 
