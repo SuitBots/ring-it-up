@@ -37,7 +37,7 @@ void DeadReckoningDriveForwardCM(long amount) {
 }
 
 void TurnLeftThisManyDegrees (int degrees) {
-  const float SCALE_FACTOR = 30;
+  const float SCALE_FACTOR = 23;
   int abs_degrees = abs(degrees);
   swingTurn(100, abs_degrees * SCALE_FACTOR, degrees > 0, ML, MR);
 }
@@ -98,16 +98,16 @@ void RaiseHand () {
 
 void DriveToPegLeft (bool use_guided)
 { GoForward (125);
-  TurnRight (57);
+  TurnRight (45);
   if (use_guided)
-    GuidedDriveForward (320);
+    GuidedDriveForward (60);
   else
     GoForward (60);
 }
 
 void DriveToPegMiddle (bool use_guided)
 { GoForward (40);
-  TurnRight (57);
+  TurnRight (45);
   GoForward (73);
   if (use_guided)
     GuidedDriveForward (42);
@@ -117,7 +117,7 @@ void DriveToPegMiddle (bool use_guided)
 
 void DriveToPegRight (bool use_guided)
 { GoForward (5);
-  TurnRight (50);
+  TurnRight (40);
   GoForward (34);
   TurnLeft (24);
   GoForward (45);
@@ -127,21 +127,23 @@ void DriveToPegRight (bool use_guided)
     GoForward (60);
 }
 
+const bool USE_GUIDED_DRIVE_FORWARD = true;
+
 void DriveToPeg (peg_t column)
-{ bool middle_guided = false;
+{ bool middle_guided = true;
   switch (column) {
   case LEFT:
-    DriveToPegLeft(true);
+    DriveToPegLeft(true && USE_GUIDED_DRIVE_FORWARD);
     break;
   case RIGHT:
-    DriveToPegRight(true);
+    DriveToPegRight(true && USE_GUIDED_DRIVE_FORWARD);
     break;
   case MIDDLE:
     middle_guided = true;
     // note: Fallthrough here is completely intentional.
     // We want middle_guided to be set to true only
   default: // also: middle
-    DriveToPegMiddle(middle_guided);
+    DriveToPegMiddle(middle_guided && USE_GUIDED_DRIVE_FORWARD);
     break;
   }
 
