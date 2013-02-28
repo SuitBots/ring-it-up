@@ -141,35 +141,34 @@ void DropHand () {
 }
 
 void RaiseHand () {
-	servo[hand_vertical] = 10;
+	servo[hand_vertical] = 100;
 	nSyncedMotors = synchAB;
 	//while (nMotorEncoder[HandL] < 50) {
 		//motor[HandL] = 75;
 	//}
 }
 
-static bool USE_GUIDED_FWD = false;
+static bool USE_GUIDED_FWD = true;
 
 void DriveToPegLeft ()
-{ GoForward (125);
-	TurnRight (57);
+{ GoForward (123); //123
+	TurnRight (61); //61
 	if (USE_GUIDED_FWD)
 		GuidedDriveForward (320);
 	else
-		GoForward (60);
+		GoForward (60); //60
 	DropHand ();
 	GoBackwards (10);
 }
 
 void DriveToPegMiddle ()
-{ GoForward (40);
-	TurnRight (57);
+{ GoForward (40); // 40
+	TurnRight (57); //57
 	if (USE_GUIDED_FWD) {
 		GoForward (73);
 		GuidedDriveForward (42);
 	} else
-		GoForward (115);
-
+		GoForward (115); //115
 	DropHand ();
 	GoBackwards (10);
 }

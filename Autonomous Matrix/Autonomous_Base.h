@@ -143,10 +143,10 @@ peg_t dondePeg(char sensor1, char sensor2) {
 		&& sensor2state == 6) {
 		peg = LEFT;
 	}
-	else if (sensor1state == 7
+	/*else if (sensor1state == 7
 		&& sensor2state == 7) {
 		peg = RIGHT;
-	}
+	}*/
 	else peg = MIDDLE;
 
 	return peg;
