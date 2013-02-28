@@ -68,7 +68,7 @@ void GuidedDriveForward (long max_fwd) {
     int right_power = IRmax_sig(ir1);
     int right_motor_speed = DEFAULT_MOTOR_SPEED;
     int left_motor_speed = DEFAULT_MOTOR_SPEED;
-    
+
     int power_diff = left_power - right_power;
     // if the power difference is too big, it's likely that one of the
     // senors has just dropped out.  Don't adjust from current course
@@ -79,7 +79,7 @@ void GuidedDriveForward (long max_fwd) {
       left_motor_speed = DEFAULT_MOTOR_SPEED - abs(power_diff) - power_diff;
       right_motor_speed = DEFAULT_MOTOR_SPEED - abs(power_diff) + power_diff;
     }
-    
+
     motor[ML] = -left_motor_speed;
     motor[MR] = -right_motor_speed;
     wait1Msec (WAIT_BETWEEN_SAMPLES_MS);
@@ -92,7 +92,7 @@ void DropHand () {
 }
 
 void RaiseHand () {
-  servo[hand_vertical] = 10;
+  servo[hand_vertical] = 100;
   nSyncedMotors = synchAB;
 }
 
@@ -139,7 +139,7 @@ void DriveToPeg (peg_t column)
   case MIDDLE:
     middle_guided = true;
     // note: Fallthrough here is completely intentional.
-    // We want middle_guided to be set to true only 
+    // We want middle_guided to be set to true only
   default: // also: middle
     DriveToPegMiddle(middle_guided);
     break;

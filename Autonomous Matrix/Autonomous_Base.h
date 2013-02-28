@@ -67,7 +67,7 @@ void pivotTurn(short power, int degree, bool direction, char DrivL, char DrivR) 
 }
 
 
-typedef enum { LEFT, MIDDLE, RIGHT, UNDETERMINED } peg_t;
+typedef enum { LEFT, MIDDLE, RIGHT, NONE } peg_t;
 typedef enum { RED, BLUE, UNDETERMINED } side_t;
 
 // Dear Hunter,
@@ -151,7 +151,7 @@ peg_t dondePeg(char sensor1, char sensor2) {
                  && sensorright == 7) {
           peg = MIDDLE;
         }
-	else peg = UNDETERMINED;
+	else peg = NONE;
 
 	return peg;
 }
