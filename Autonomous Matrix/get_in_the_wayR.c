@@ -1,3 +1,9 @@
+//
+// get_in_the_warR.c
+//
+// Copyright (c) 2013 Suit Bots 4628
+//
+
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTServo,  none)
 #pragma config(Sensor, S1,     ,               sensorI2CMuxController)
 #pragma config(Motor,  motorB,          HandL,         tmotorNXT, PIDControl, encoder)
