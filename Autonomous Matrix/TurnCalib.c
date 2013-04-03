@@ -1,3 +1,9 @@
+//
+// TurnCalib.c
+//
+// Copyright (c) 2013 Suit Bots
+//
+
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTServo,  HTMotor)
 #pragma config(Hubs,  S2, HTMotor,  none,     none,     none)
 #pragma config(Sensor, S3,     ir,             sensorI2CCustom)
