@@ -1,3 +1,9 @@
+//
+// nada.c
+//
+// Copyright (c) 2013 Suit Bots 4628
+//
+
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTServo,  HTMotor)
 #pragma config(Sensor, S1,     ,               sensorI2CMuxController)
 #pragma config(Motor,  motorA,          HandL,         tmotorNXT, openLoop, reversed, encoder)
