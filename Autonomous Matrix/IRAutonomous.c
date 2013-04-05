@@ -1,3 +1,9 @@
+//
+// IRAutonomous.c
+//
+// Copyright (c) 2013 Suit Bots 4628
+//
+
 #pragma config(Hubs,  S1, HTMotor,  HTMotor,  HTServo,  HTMotor)
 #pragma config(Sensor, S2,     ir1,            sensorHiTechnicIRSeeker1200)
 #pragma config(Sensor, S3,     ir2,            sensorHiTechnicIRSeeker1200)
